@@ -1,6 +1,7 @@
 {
-  "name": "@df/tailwind-mq",
-  "private": true,
+  "name": "tailwind-mq",
+  "author": "uforgot@me.com",
+  "private": false,
   "version": "0.0.1",
   "type": "module",
   "main": "dist/index.js",
@@ -20,5 +21,8 @@
     "@types/node": "^20.8.0"
   },
   "dependencies": {
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
