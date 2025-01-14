@@ -3,10 +3,17 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
+    "prepack": "yarn build",
     "build": "yarn build:tsc",
     "build:tsc": "yarn tsc"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "devDependencies": {
     "typescript": "~5.6.2",
