@@ -8,6 +8,8 @@ interface IDictionary<T> {
 
 export enum TYPE_SIZE {
   MOBILE,
+  TABLET_VERTICAL,
+  TABLE_HORIZONTAL,
   DESKTOP
 }
 
