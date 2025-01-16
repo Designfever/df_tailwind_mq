@@ -7,6 +7,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "vite",
+    "test": "vite build && vite preview",
     "prepack": "yarn build",
     "build": "yarn clean && yarn build:tsc && yarn build:js",
     "build:tsc": "yarn tsc",
@@ -15,12 +16,13 @@
   },
   "exports": {
     ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./build/index.cjs",
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
     }
   },
   "devDependencies": {
+    "@babel/parser": "^7.26.5",
     "@types/jest": "^29.5.14",
     "@types/node": "20.8.0",
     "esbuild": "^0.24.2",

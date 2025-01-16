@@ -2,7 +2,7 @@ import esbuild from 'esbuild';
 
 const baseConfig = {
   entryPoints: ["src/index.ts"],
-  outdir:'dist',
+  outdir:'build',
   bundle: true,
   sourcemap: true,
   minify: true,

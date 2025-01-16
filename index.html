@@ -3,16 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vite App</title>
+  <title>@designfever / tailwind-mq test</title>
 </head>
 <body style="background: #ff0">
-<div id="app" style="font-size:1.2rem;">
-  <h1>@designfever / tailwind-mq test</h1>
-  <div style="margin-bottom: 1rem;">
-    <label for="input1" style="display:inline-block; width:5rem;">origin</label><input type="text" id="input1" width="300" style="width:30rem; padding:0.5rem"/>
-  </div>
-  <div style="display: flex; ">
-    <label for="output1"  style="display:inline-block; width:5rem;">output</label><textarea id="output1" cols="100" rows="20" style="padding:0.5rem"></textarea>
+<div style="width:100%; height:100%; display:flex; justify-content: center;">
+  <div id="app" style="display:inline-block; font-size:1.2rem; border:2px dashed #000; padding:2rem">
+    <h1 style="font-size:1.8rem; margin-bottom:2rem; margin-top:0; text-decoration: underline;">@designfever / tailwind-mq test <span id="version"></span></h1>
+
+    <div style="display:flex; margin-bottom: 1rem;">
+      <label style="display:inline-block; width:6rem; font-size:1rem;">break-point</label>
+      <div style=" font-size:1rem;" id="breakpoint">&nbsp;</div>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <label for="input1" style="display:inline-block; width:6rem;  font-size:1rem;">origin</label><input type="text" id="input1" width="300" style="width:400px; padding:0.5rem"/>
+    </div>
+    <div style="display: flex; ">
+      <label for="output1"  style="display:inline-block; width:6rem;  font-size:1rem;">output</label><textarea id="output1"  rows="20" style="width:400px; padding:0.5rem"></textarea>
+    </div>
   </div>
 </div>
 <script type="module" src="src/test.ts"></script>

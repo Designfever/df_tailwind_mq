@@ -4,9 +4,11 @@
     "module": "ES6" /* 모듈 시스템을 지정한다. */,
     "lib": ["es5", "es6", "dom"],
     "removeComments": true, //컴파일시 주석제거
+    "resolveJsonModule": true,
 
+    "moduleResolution": "node",
     "declaration": true,
-    "outDir": "dist",
+    "outDir": "build",
     "strict": true
   },
   "include": [
