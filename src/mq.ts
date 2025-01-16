@@ -8,8 +8,6 @@ interface IDictionary<T> {
 
 export enum TYPE_SIZE {
   MOBILE,
-  TABLET_VERTICAL,
-  TABLE_HORIZONTAL,
   DESKTOP
 }
 
@@ -50,7 +48,8 @@ class Mq {
   public static breakPoint = [
     MIN_WIDTH_MOBILE,
     MIN_WIDTH_TABLET,
-    MIN_WIDTH_DESKTOP
+    MIN_WIDTH_DESKTOP,
+    MIN_WIDTH_DESKTOP + 1
   ];
   public static constantStyle = {};
 

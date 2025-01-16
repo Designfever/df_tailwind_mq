@@ -6,6 +6,10 @@ const inputEl = document.getElementById('input1') as HTMLInputElement;
 const outputEl = document.getElementById('output1') as HTMLInputElement;
 const breakPointEl = document.getElementById('breakpoint') as HTMLInputElement;
 
+// Mq.breakPoint = [100, 200, 300, 301];
+Mq.constantStyle = {
+  TEST:100
+}
 
 if (versionEl) {
   versionEl.innerHTML = version;

@@ -8,3 +8,5 @@ export default function ({ matchUtilities, theme }) {
     }
   })
 };
+
+export { Mq };

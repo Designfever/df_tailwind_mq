@@ -15,6 +15,12 @@ add the plugin to your {tailwind.config.js} file
 ```javascript 
 import TailwindMq from '@designfever/tailwind-mq';
 
+// default break point : [640, 1024, 1281]
+Mq.breakPoint = [100, 200, 300, 301];
+Mq.constantStyle = {
+  TEST:100
+}
+
 export default {
   ...,
   plugins: [plugin(TailwindMq)]
