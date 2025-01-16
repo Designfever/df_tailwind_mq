@@ -2,7 +2,7 @@
   "name": "@designfever/tailwind-mq",
   "author": "uforgot@me.com",
   "private": false,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
