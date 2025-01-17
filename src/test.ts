@@ -32,6 +32,7 @@ if (inputEl && outputEl) {
 
   // inputEl.value = testValue;
   inputEl.value = 'width|100px<200px<300px';
+  inputEl.value = 'width|translate3d(0,0,0)';
   outputEl.value = getMqByString(inputEl.value, true) as string;
 }
 

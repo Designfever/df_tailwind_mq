@@ -33,7 +33,7 @@ export function getMqByString(str: string, isString = false) {
   }
 
   const rtnValue = JSON.stringify(rtnObj, null, 2);
-  return rtnValue.replace(/"/g, '').replace(/,/g, '\n');
+  return rtnValue.replace(/"/g, '').replace(/,\n/g, '\n');
 }
 
 class Mq {
