@@ -7,8 +7,10 @@ const outputEl = document.getElementById('output1') as HTMLInputElement;
 const breakPointEl = document.getElementById('breakpoint') as HTMLInputElement;
 
 // const testValue = 'width|TEST_30spx_20px_10px_20px<200px_200px<300px_300px';
-
+// Mq.setBreakPoint([650, 1280, 1920]);
 // Mq.setBreakPoint([620, 1024]);
+// Mq.setMobileRatio(1);
+
 Mq.constantStyle = {
   TEST: 100
 };
@@ -32,7 +34,7 @@ if (inputEl && outputEl) {
 
   // inputEl.value = testValue;
   inputEl.value = 'width|100px<200px<300px';
-  inputEl.value = 'width|translate3d(0,0,0)';
+  // inputEl.value = 'width|translate3d(0,0,0)';
   outputEl.value = getMqByString(inputEl.value, true) as string;
 }
 

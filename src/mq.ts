@@ -45,6 +45,7 @@ class Mq {
     MIN_WIDTH_DESKTOP,
     MIN_WIDTH_DESKTOP + 1
   ];
+  private static mobileRatio = 2;
   private static MAX_DIGIT = 5;
   public static constantStyle = {};
   public static get getBreakPoint() {
@@ -52,15 +53,18 @@ class Mq {
   }
   public static setBreakPoint(value: Array<number>) {
     Mq.breakPoint = value;
-    Mq.breakPoint.push(Mq.breakPoint[Mq.breakPoint.length - 1] + 1);
+    Mq.breakPoint.push(value[value.length - 1] + 1);
+  }
+  public static setMobileRatio(value: number) {
+    Mq.mobileRatio = value;
   }
 
   constructor(
     private property: string,
     origin: Array<string>
   ) {
-    console.log(Mq.breakPoint);
-    console.log(origin);
+    // console.log(Mq.breakPoint);
+    // console.log(origin);
 
     let lastValue = origin[0];
     Mq.breakPoint.forEach((value, index) => {
@@ -71,16 +75,7 @@ class Mq {
         this._valueArray.push(this.getValue(lastValue, index, true));
       }
     });
-
-    console.log(this._valueArray);
-    // for (let i = this._valueArray.length; i < Mq.breakPoint.length; i++) {
-    //   this._valueArray.push(this.getValue(origin[origin.length - 1], i, true));
-    // }
   }
-  //
-  // get valueArray() {
-  //   return this._valueArray;
-  // }
 
   get value() {
     const obj: IDictionary<IDictionary<string> | string> = {};
@@ -100,7 +95,7 @@ class Mq {
     // const unit = this.getUnitType(value);
 
     if (width === Mq.breakPoint[0]) {
-      width = width / 2;
+      width = width / Mq.mobileRatio;
     }
 
     if (!isStatic) {

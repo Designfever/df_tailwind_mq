@@ -17,6 +17,7 @@ import TailwindMq from '@designfever/tailwind-mq';
 
 // default break point : [640, 1024, 1281]
 Mq.breakPoint = [100, 200, 300, 301];
+Mq.setMobileRatio(2);
 Mq.constantStyle = {
   TEST:100
 }
