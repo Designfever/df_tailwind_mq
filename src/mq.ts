@@ -59,13 +59,23 @@ class Mq {
     private property: string,
     origin: Array<string>
   ) {
-    origin.forEach((value, index) => {
-      this._valueArray.push(this.getValue(value, index));
+    console.log(Mq.breakPoint);
+    console.log(origin);
+
+    let lastValue = origin[0];
+    Mq.breakPoint.forEach((value, index) => {
+      if (origin[index] && index < Mq.breakPoint.length - 1) {
+        this._valueArray.push(this.getValue(origin[index], index));
+        lastValue = origin[index];
+      } else {
+        this._valueArray.push(this.getValue(lastValue, index, true));
+      }
     });
 
-    for (let i = this._valueArray.length; i < Mq.breakPoint.length; i++) {
-      this._valueArray.push(this.getValue(origin[origin.length - 1], i, true));
-    }
+    console.log(this._valueArray);
+    // for (let i = this._valueArray.length; i < Mq.breakPoint.length; i++) {
+    //   this._valueArray.push(this.getValue(origin[origin.length - 1], i, true));
+    // }
   }
   //
   // get valueArray() {
@@ -78,19 +88,12 @@ class Mq {
 
     for (let i = 0; i < Mq.breakPoint.length - 1; i++) {
       obj[`@media (min-width : ${Mq.breakPoint[i] + 1}px)`] = {
-        [this.property]: this._valueArray[i]
+        [this.property]: this._valueArray[i + 1]
       };
     }
 
     if (this.isDebug) console.log(obj);
     return obj;
-  }
-
-  private getUnitType(value: string): string {
-    for (const key in UNIT_STORED) {
-      if (UNIT_STORED[key].reg?.test(value)) return key;
-    }
-    return 'TYPE_UNDEFINED';
   }
 
   private getVw(value: string, width: number, isStatic = false): string {
@@ -102,7 +105,6 @@ class Mq {
 
     if (!isStatic) {
       const match = value.match(/([0-9.]+)(px)/g);
-      console.log(match);
 
       if (match) {
         match.forEach((str) => {
@@ -114,22 +116,10 @@ class Mq {
     }
 
     value = value.replace(/spx/g, 'px');
-
-    // value = value;
-
-    // if (UNIT_STORED[unit].unit === UNIT_STORED.TYPE_PX.unit && !isStatic) {
-    //   const transformValue = `${(parseFloat(value) / width) * 100}vw`;
-    //   value = String(value).replace(parseFloat(value) + 'px', transformValue);
-    // } else if (UNIT_STORED[unit].unit === UNIT_STORED.TYPE_STATIC_PX.unit || isStatic) {
-    //   return value.replace(UNIT_STORED.TYPE_STATIC_PX.unit, UNIT_STORED.TYPE_PX.unit);
-    // }
-
     return value;
   }
 
   private setChangeConstant(origin: string) {
-    console.log('setChangeConstant', origin);
-    console.log(Mq.constantStyle);
     let rtn = origin.trim();
 
     for (const key of Object.keys(Mq.constantStyle)) {
