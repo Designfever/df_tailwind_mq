@@ -6,17 +6,19 @@ const inputEl = document.getElementById('input1') as HTMLInputElement;
 const outputEl = document.getElementById('output1') as HTMLInputElement;
 const breakPointEl = document.getElementById('breakpoint') as HTMLInputElement;
 
-// Mq.breakPoint = [100, 200, 300, 301];
-// Mq.constantStyle = {
-//   TEST:100
-// }
+const testValue = 'width|TEST_30spx_20px_10px_20px<200px_200px<300px_300px';
+
+Mq.setBreakPoint([620, 1024, 1280]);
+Mq.constantStyle = {
+  TEST: 100
+};
 
 if (versionEl) {
   versionEl.innerHTML = version;
 }
 
 if (breakPointEl) {
-  breakPointEl.innerHTML = Mq.breakPoint.join('px < ') + 'px';
+  breakPointEl.innerHTML = Mq.getBreakPoint.join('px < ') + 'px';
 }
 
 if (inputEl && outputEl) {
@@ -28,8 +30,9 @@ if (inputEl && outputEl) {
     outputEl.value = getMqByString(str, true) as string;
   });
 
-  inputEl.value = 'width|100px<200px<300px';
-  outputEl.value = getMqByString('width|100px<200px<300px', true) as string;
+  inputEl.value = testValue;
+  // inputEl.value = 'width|100px<200px<300px'
+  outputEl.value = getMqByString(inputEl.value, true) as string;
 }
 
 /***

@@ -1,16 +1,9 @@
 const MIN_WIDTH_MOBILE = 620;
-const MIN_WIDTH_TABLET =1024;
+const MIN_WIDTH_TABLET = 1024;
 const MIN_WIDTH_DESKTOP = 1280;
 
 interface IDictionary<T> {
   [index: string]: T;
-}
-
-export enum TYPE_SIZE {
-  MOBILE,
-  TABLET_VERTICAL,
-  TABLE_HORIZONTAL,
-  DESKTOP
 }
 
 interface IUnitData {
@@ -28,7 +21,7 @@ export const UNIT_STORED: IUnitData = {
   TYPE_UNDEFINED: { unit: '', reg: null }
 };
 
-export function getMqByString(str: string, isString=false) {
+export function getMqByString(str: string, isString = false) {
   const strArray = String(str).split('|');
   const property = strArray[0];
   const valueArray = String(strArray[1]).split('<');
@@ -36,24 +29,31 @@ export function getMqByString(str: string, isString=false) {
   const rtnObj = new Mq(property, valueArray).value;
 
   if (!isString) {
-      return rtnObj;
+    return rtnObj;
   }
 
-  const rtnValue =JSON.stringify( rtnObj,null,2);
-  return  rtnValue.replace(/"/g, '').replace(/,/g, '\n');
-
+  const rtnValue = JSON.stringify(rtnObj, null, 2);
+  return rtnValue.replace(/"/g, '').replace(/,/g, '\n');
 }
 
 class Mq {
   private _valueArray: Array<string> = [];
   private isDebug = false;
-  public static breakPoint = [
+  private static breakPoint = [
     MIN_WIDTH_MOBILE,
     MIN_WIDTH_TABLET,
     MIN_WIDTH_DESKTOP,
     MIN_WIDTH_DESKTOP + 1
   ];
+  private static MAX_DIGIT = 5;
   public static constantStyle = {};
+  public static get getBreakPoint() {
+    return Mq.breakPoint;
+  }
+  public static setBreakPoint(value: Array<number>) {
+    Mq.breakPoint = value;
+    Mq.breakPoint.push(Mq.breakPoint[Mq.breakPoint.length - 1] + 1);
+  }
 
   constructor(
     private property: string,
@@ -76,17 +76,11 @@ class Mq {
     const obj: IDictionary<IDictionary<string> | string> = {};
     obj[this.property] = this.getValue(this._valueArray[0], 0, true);
 
-    obj[`@media (min-width : ${Mq.breakPoint[0] + 1}px)`] = {
-      [this.property]: this._valueArray[1]
-    };
-
-    obj[`@media (min-width : ${Mq.breakPoint[1] + 1}px)`] = {
-      [this.property]: this._valueArray[2]
-    };
-
-    obj[`@media (min-width : ${Mq.breakPoint[2] + 1}px)`] = {
-      [this.property]: this._valueArray[3]
-    };
+    for (let i = 0; i < Mq.breakPoint.length - 1; i++) {
+      obj[`@media (min-width : ${Mq.breakPoint[i] + 1}px)`] = {
+        [this.property]: this._valueArray[i]
+      };
+    }
 
     if (this.isDebug) console.log(obj);
     return obj;
@@ -100,46 +94,64 @@ class Mq {
   }
 
   private getVw(value: string, width: number, isStatic = false): string {
-    const unit = this.getUnitType(value);
+    // const unit = this.getUnitType(value);
 
     if (width === Mq.breakPoint[0]) {
       width = width / 2;
     }
 
-    if (UNIT_STORED[unit].unit === UNIT_STORED.TYPE_PX.unit && !isStatic) {
-      const transformValue = `${(parseFloat(value) / width) * 100}vw`;
-      value = String(value).replace(parseFloat(value) + 'px', transformValue);
-    } else if (UNIT_STORED[unit].unit === UNIT_STORED.TYPE_STATIC_PX.unit || isStatic) {
-      return value.replace(UNIT_STORED.TYPE_STATIC_PX.unit, UNIT_STORED.TYPE_PX.unit);
+    if (!isStatic) {
+      const match = value.match(/([0-9.]+)(px)/g);
+      console.log(match);
+
+      if (match) {
+        match.forEach((str) => {
+          const px = parseFloat(str.replace('px', ''));
+          const vw = (px / width) * 100;
+          value = value.replace(str, `${vw.toFixed(Mq.MAX_DIGIT)}vw`);
+        });
+      }
     }
+
+    value = value.replace(/spx/g, 'px');
+
+    // value = value;
+
+    // if (UNIT_STORED[unit].unit === UNIT_STORED.TYPE_PX.unit && !isStatic) {
+    //   const transformValue = `${(parseFloat(value) / width) * 100}vw`;
+    //   value = String(value).replace(parseFloat(value) + 'px', transformValue);
+    // } else if (UNIT_STORED[unit].unit === UNIT_STORED.TYPE_STATIC_PX.unit || isStatic) {
+    //   return value.replace(UNIT_STORED.TYPE_STATIC_PX.unit, UNIT_STORED.TYPE_PX.unit);
+    // }
 
     return value;
   }
 
   private setChangeConstant(origin: string) {
+    console.log('setChangeConstant', origin);
+    console.log(Mq.constantStyle);
     let rtn = origin.trim();
 
     for (const key of Object.keys(Mq.constantStyle)) {
       // @ts-ignore
       const keyString = key.replace(new RegExp('_', 'g'), ' ');
       // @ts-ignore
-      if (typeof Mq.constantStyle[key] === 'number') {
-        rtn = rtn.replace(
-          new RegExp(`\\b${keyString}\\b`, 'g'),
-          // @ts-ignore
-          `${Mq.constantStyle[key]}px`
-        );
-      }
+
+      rtn = rtn.replace(
+        new RegExp(`${keyString}`, 'g'),
+        // @ts-ignore
+        `${Mq.constantStyle[key]}${typeof Mq.constantStyle[key] === 'number' ? 'px' : ''}`
+      );
     }
 
     return rtn;
   }
 
-  private getValue(origin: string, index = TYPE_SIZE.MOBILE, isStatic = false, token = ' ') {
+  private getValue(origin: string, index = 0, isStatic = false, token = ' ') {
     let value = '';
 
     // desktop 에서는 맥스 사이즈 이므로 vw 연산을 하지 않도록 함.
-    if (index === TYPE_SIZE.DESKTOP) {
+    if (index === Mq.breakPoint.length - 1) {
       isStatic = true;
     }
 
