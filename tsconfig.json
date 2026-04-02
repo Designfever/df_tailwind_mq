@@ -6,8 +6,10 @@
     "removeComments": true, //컴파일시 주석제거
     "resolveJsonModule": true,
 
-    "moduleResolution": "node",
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
     "declaration": true,
+    "rootDir": "src",
     "outDir": "dist",
     "strict": true,
     "skipLibCheck": true
