@@ -1,50 +1,38 @@
 import { version } from '../package.json';
 import Mq, { getMqByString } from './mq';
 
-const versionEl = document.getElementById('version') as HTMLInputElement;
+const versionEl = document.getElementById('version') as HTMLElement;
 const inputEl = document.getElementById('input1') as HTMLInputElement;
-const outputEl = document.getElementById('output1') as HTMLInputElement;
-const breakPointEl = document.getElementById('breakpoint') as HTMLInputElement;
+const outputEl = document.getElementById('output1') as HTMLTextAreaElement;
+const breakpointsEl = document.getElementById('opt-breakpoints') as HTMLInputElement;
+const ratioEl = document.getElementById('opt-ratio') as HTMLInputElement;
+const autoRatioEl = document.getElementById('opt-auto-ratio') as HTMLInputElement;
+const overlapEl = document.getElementById('opt-overlap') as HTMLInputElement;
 
-// const testValue = 'width|TEST_30spx_20px_10px_20px<200px_200px<300px_300px';
-// Mq.setBreakPoint([650, 1280, 1920]);
-// Mq.setBreakPoint([620, 1024]);
-// Mq.setMobileRatio(1);
+if (versionEl) versionEl.textContent = version;
 
-Mq.constantStyle = {
-  TEST: 100
-};
+function applyOptions() {
+  const bpRaw = breakpointsEl.value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  if (bpRaw.length >= 2) Mq.setBreakPoint(bpRaw);
 
-if (versionEl) {
-  versionEl.innerHTML = version;
+  const ratio = parseFloat(ratioEl.value);
+  if (!isNaN(ratio) && ratio > 0) Mq.setMobileRatio(ratio);
+
+  Mq.setSupportCalcAutoRatio(autoRatioEl.checked);
+  Mq.setOverlap(overlapEl.checked);
 }
 
-if (breakPointEl) {
-  breakPointEl.innerHTML = Mq.getBreakPoint.join('px < ') + 'px';
-}
-
-if (inputEl && outputEl) {
-  inputEl.addEventListener('input', (e) => {
-    const el = e.target as HTMLInputElement;
-    if (!el) return;
-
-    const str = el.value;
-    outputEl.value = getMqByString(str, true) as string;
-  });
-
-  // inputEl.value = testValue;
-  inputEl.value = 'width|100px<200px<300px';
-  // inputEl.value = 'width|translate3d(0,0,0)';
+function update() {
+  applyOptions();
+  if (!inputEl.value) { outputEl.value = ''; return; }
   outputEl.value = getMqByString(inputEl.value, true) as string;
 }
 
-/***
- width|100px<200px<300px
- {
- width: '32.25806451612903vw',
- '@media (min-width : 621px)': { width: '19.53125vw' },
- '@media (min-width : 1025px)': { width: '23.4375vw' },
- '@media (min-width : 1281px)': { width: '300px' }
- }
+inputEl.addEventListener('input', update);
+breakpointsEl.addEventListener('change', update);
+ratioEl.addEventListener('change', update);
+autoRatioEl.addEventListener('change', update);
+overlapEl.addEventListener('change', update);
 
- ***/
+inputEl.value = 'width|100px<200px<300px';
+update();

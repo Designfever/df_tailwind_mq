@@ -47,6 +47,8 @@ class Mq {
   ];
   private static mobileRatio = 2;
   private static MAX_DIGIT = 5;
+  private static supportCalcAutoRatio = false;
+  private static overlap = false;
   public static constantStyle = {};
   public static get getBreakPoint() {
     return Mq.breakPoint;
@@ -58,13 +60,20 @@ class Mq {
   public static setMobileRatio(value: number) {
     Mq.mobileRatio = value;
   }
+  public static setSupportCalcAutoRatio(value: boolean) {
+    Mq.supportCalcAutoRatio = value;
+  }
+  public static setOverlap(value: boolean) {
+    Mq.overlap = value;
+  }
 
   constructor(
     private property: string,
     origin: Array<string>
   ) {
-    // console.log(Mq.breakPoint);
-    // console.log(origin);
+    if (Mq.supportCalcAutoRatio) {
+      origin = this.expandAutoRatio(origin);
+    }
 
     let lastValue = origin[0];
     Mq.breakPoint.forEach((value, index) => {
@@ -77,13 +86,74 @@ class Mq {
     });
   }
 
+  private expandAutoRatio(origin: Array<string>): Array<string> {
+    const bpLen = Mq.breakPoint.length - 1; // content breakpoint 제외
+    if (origin.length >= bpLen) return origin;
+
+    const result = [...origin];
+
+    if (result.length === 1) {
+      // 1개 값: mobile 기준으로 tablet, desktop 비율 계산
+      const firstValue = result[0];
+      const match = firstValue.match(/([0-9.]+)(px)/g);
+
+      if (match) {
+        let tabletValue = firstValue;
+        match.forEach((str) => {
+          const px = parseFloat(
+            ((parseFloat(str.replace('px', '')) * Mq.breakPoint[1]) /
+              Mq.breakPoint[0]).toFixed(Mq.MAX_DIGIT)
+          );
+          tabletValue = tabletValue.replace(str, `${px}px`);
+        });
+        result.push(tabletValue);
+
+        let desktopValue = firstValue;
+        match.forEach((str) => {
+          const px = parseFloat(
+            ((parseFloat(str.replace('px', '')) * Mq.breakPoint[2]) /
+              Mq.breakPoint[0]).toFixed(Mq.MAX_DIGIT)
+          );
+          desktopValue = desktopValue.replace(str, `${px}px`);
+        });
+        result.push(desktopValue);
+      }
+    } else if (result.length === 2) {
+      // 2개 값: [mobile, desktop] → tablet을 보간 계산
+      const desktopValue = result[1];
+      const match = desktopValue.match(/([0-9.]+)(px)/g);
+
+      if (match) {
+        let tabletValue = desktopValue;
+        match.forEach((str) => {
+          const px = parseFloat(
+            ((parseFloat(str.replace('px', '')) * Mq.breakPoint[1]) /
+              Mq.breakPoint[2]).toFixed(Mq.MAX_DIGIT)
+          );
+          tabletValue = tabletValue.replace(str, `${px}px`);
+        });
+        result.splice(1, 0, tabletValue);
+      }
+    }
+
+    return result;
+  }
+
   get value() {
     const obj: IDictionary<IDictionary<string> | string> = {};
     obj[this.property] = this.getValue(this._valueArray[0], 0, true);
 
+    let prior: string | undefined;
+
     for (let i = 0; i < Mq.breakPoint.length - 1; i++) {
+      const val = this._valueArray[i + 1];
+
+      // overlap: 이전 breakpoint와 값이 같으면 생략
+      if (Mq.overlap && val === prior) continue;
+      prior = val;
+
       obj[`@media (min-width : ${Mq.breakPoint[i] + 1}px)`] = {
-        [this.property]: this._valueArray[i + 1]
+        [this.property]: val
       };
     }
 

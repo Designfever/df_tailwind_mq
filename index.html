@@ -3,25 +3,245 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@designfever / tailwind-mq test</title>
-</head>
-<body style="background: #ff0; font-family: sans-serif">
-<div style="width:100%; height:100%; display:flex; justify-content: center;">
-  <div id="app" style="display:inline-block; font-size:1.2rem; border:2px dashed #000; padding:2rem">
-    <h1 style="font-size:1.8rem; margin-bottom:2rem; margin-top:0; text-decoration: underline;">@designfever / tailwind-mq test <span id="version"></span></h1>
+  <title>@designfever/tailwind-mq</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <div style="display:flex; margin-bottom: 1rem;">
-      <label style="display:inline-block; width:6rem; font-size:1rem;">break-point</label>
-      <div style=" font-size:1rem;" id="breakpoint">&nbsp;</div>
+    body {
+      background: #0d0d0d;
+      color: #e8e8e8;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .header {
+      margin-bottom: 2.5rem;
+    }
+
+    .package-name {
+      font-size: 0.75rem;
+      color: #555;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .version {
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: 0.4rem;
+    }
+
+    .section {
+      background: #161616;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 0.65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field-label {
+      font-size: 0.65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 0.55rem 0.75rem;
+      color: #e8e8e8;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus {
+      border-color: #444;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0;
+    }
+
+    .toggle-label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { display: none; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #2a2a2a;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: #555;
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: #2d5a3d;
+    }
+
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(16px);
+      background: #7ec8a0;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #1e1e1e;
+      margin: 0.75rem 0;
+    }
+
+    textarea {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      color: #7ec8a0;
+      font-family: inherit;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <p class="package-name">@designfever</p>
+      <h1 class="title">tailwind-mq</h1>
+      <p class="version">v<span id="version"></span></p>
     </div>
-    <div style="margin-bottom: 1rem;">
-      <label for="input1" style="display:inline-block; width:6rem;  font-size:1rem;">origin</label><input type="text" id="input1" width="300" style="width:400px; padding:0.5rem"/>
+
+    <div class="section">
+      <p class="section-title">options</p>
+      <div class="options-grid">
+
+        <div class="field">
+          <label class="field-label" for="opt-breakpoints">breakpoints</label>
+          <input type="text" id="opt-breakpoints" value="620, 1024, 1280" spellcheck="false" />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="opt-ratio">mobile ratio</label>
+          <input type="number" id="opt-ratio" value="2" min="1" max="10" step="0.5" />
+        </div>
+
+        <div class="field full">
+          <div class="divider"></div>
+        </div>
+
+        <div class="field">
+          <div class="toggle-row">
+            <span class="toggle-label">auto ratio</span>
+            <label class="toggle">
+              <input type="checkbox" id="opt-auto-ratio" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="toggle-row">
+            <span class="toggle-label">overlap</span>
+            <label class="toggle">
+              <input type="checkbox" id="opt-overlap" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div style="display: flex; ">
-      <label for="output1"  style="display:inline-block; width:6rem;  font-size:1rem;">output</label><textarea id="output1"  rows="20" style="border:1px dashed #000; background:#ff0; width:400px; padding:0.5rem"></textarea>
+
+    <div class="section">
+      <p class="section-title">playground</p>
+
+      <div class="field" style="margin-bottom: 0.75rem;">
+        <label class="field-label" for="input1">input</label>
+        <input type="text" id="input1" placeholder="property|mobile<tablet<desktop" spellcheck="false" />
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="output1">output</label>
+        <textarea id="output1" rows="18" readonly></textarea>
+      </div>
     </div>
   </div>
-</div>
-<script type="module" src="src/test.ts"></script>
+
+  <script type="module" src="src/test.ts"></script>
 </body>
 </html>
