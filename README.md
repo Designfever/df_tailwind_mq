@@ -1,75 +1,106 @@
 # @designfever/tailwind-mq
 
-Tailwind CSS 플러그인. `px` 값을 브레이크포인트별 `vw`로 자동 변환하는 반응형 유틸리티.
+[![npm version](https://img.shields.io/npm/v/%40designfever%2Ftailwind-mq.svg)](https://www.npmjs.com/package/@designfever/tailwind-mq)
+[![npm downloads](https://img.shields.io/npm/dm/%40designfever%2Ftailwind-mq.svg)](https://www.npmjs.com/package/@designfever/tailwind-mq)
+[![license: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
-**[→ 데모 사이트](https://df-tailwind-mq.vercel.app/)**
+Tailwind CSS plugin for keeping design-specified `px` values readable in code while generating responsive `vw` output for each breakpoint.
 
-## 설치
+**[Demo](https://df-tailwind-mq.vercel.app/)**
+
+`@designfever/tailwind-mq` was built for visual design-heavy web projects where small spacing, typography, and layout differences are easy to notice. It lets frontend teams keep the exact pixel values from design specs in Tailwind classes, then converts those values into breakpoint-aware viewport units at build time.
+
+## Project Context
+
+This package is maintained by Designfever for production brand-site and campaign-site workflows where teams need to translate fixed design files into responsive frontend code without losing the original visual rhythm.
+
+The public package keeps that workflow reusable across Tailwind CSS projects instead of leaving it as a private one-off utility.
+
+## Why
+
+Brand sites, campaign pages, and other visual design-driven projects often start from fixed-width design files. Manually converting every value to `vw` is repetitive, hard to review, and easy to drift away from the source design.
+
+This plugin keeps the authored value close to the design file:
+
+- Designers and developers can compare code against the original `px` spec.
+- Responsive scaling is generated consistently across breakpoints.
+- Desktop max layouts can keep exact fixed `px` values.
+- Static values such as borders can opt out with `spx`.
+
+It is useful when the design intent is "preserve the pixel-based visual rhythm, but adapt it responsively."
+
+## Korean Summary
+
+디자인 시안의 `px` 값을 코드에 그대로 남겨두면서 모바일/태블릿/데스크톱 구간별 `vw` 대응을 자동 생성하는 Tailwind CSS 플러그인입니다.
+
+비주얼 완성도가 중요한 브랜드 사이트, 캠페인 페이지, 인터랙티브 프로젝트에서 디자인 원본의 pixel rhythm을 유지한 채 반응형 레이아웃을 관리하기 위해 만들었습니다.
+
+## Installation
 
 ```bash
 npm install @designfever/tailwind-mq
 ```
 
-## 설정
+## Setup
 
-`tailwind.config.js`에 플러그인 추가:
+Add the plugin to `tailwind.config.js`:
 
 ```js
 import { plugin } from 'tailwindcss/plugin';
 import TailwindMq, { Mq } from '@designfever/tailwind-mq';
 
-// 옵션 설정 (선택)
-Mq.setBreakPoint([620, 1024, 1280]);   // 기본값
-Mq.setMobileRatio(2);                  // 기본값
+// Optional settings
+Mq.setBreakPoint([620, 1024, 1280]); // default
+Mq.setMobileRatio(2); // default
 
 export default {
   plugins: [plugin(TailwindMq)],
 };
 ```
 
-## 기본 사용법
+## Usage
 
-```
+```txt
 mq-[property|mobile<tablet<desktop]
 ```
 
-- 값은 `<`로 구분, 브레이크포인트 순서대로 입력
-- `px` → 각 브레이크포인트 기준 `vw`로 자동 변환
-- 마지막 브레이크포인트(desktop max)는 항상 `px` 유지
-- 값을 생략하면 이전 값이 그대로 이어짐
-- 공백은 `_`로 대체 (Tailwind 이스케이프)
+- Separate values with `<` in breakpoint order.
+- `px` values are converted to `vw` for each breakpoint.
+- The final desktop max value stays as fixed `px`.
+- Missing values inherit the previous value.
+- Use `_` instead of spaces in Tailwind class names.
 
 ```html
-<!-- 3개 값: mobile / tablet / desktop -->
+<!-- 3 values: mobile / tablet / desktop -->
 <div class="mq-[width|100px<200px<300px]"></div>
 
-<!-- 2개 값: mobile / tablet~desktop -->
+<!-- 2 values: mobile / tablet~desktop -->
 <div class="mq-[display|none<block]"></div>
 
-<!-- 공백 포함 (padding shorthand) -->
+<!-- Spaced shorthand values -->
 <div class="mq-[padding|0_0_0_10px<0_0_0_20px<0_0_0_30px]"></div>
 ```
 
-## 브레이크포인트
+## Breakpoints
 
-기본값: `[620, 1024, 1280]`
+Default: `[620, 1024, 1280]`
 
-| 구간 | 조건 | vw 기준 |
-|------|------|---------|
-| Mobile | `≤ 620px` | `620 / mobileRatio` (기본 310) |
+| Range | Condition | `vw` base |
+| --- | --- | --- |
+| Mobile | `<= 620px` | `620 / mobileRatio` (default: 310) |
 | Tablet | `621px ~ 1024px` | `1024` |
 | Desktop | `1025px ~ 1280px` | `1280` |
-| Max | `≥ 1281px` | px 고정 (변환 없음) |
+| Max | `>= 1281px` | fixed `px` |
 
-## 단위
+## Units
 
-| 단위 | 설명 |
-|------|------|
-| `px` | vw로 변환됨 |
-| `spx` | static px — vw 변환 없이 px 유지 |
+| Unit | Description |
+| --- | --- |
+| `px` | Converted to `vw` |
+| `spx` | Static px. Kept as fixed `px` without conversion |
 
 ```html
-<!-- 10px는 vw로 변환, 2spx는 px 유지 -->
+<!-- 10px is converted to vw, 2spx stays as px -->
 <div class="mq-[border|1spx_solid_transparent<2spx_solid_black]"></div>
 ```
 
@@ -77,7 +108,7 @@ mq-[property|mobile<tablet<desktop]
 
 ### `Mq.setBreakPoint(value: number[])`
 
-브레이크포인트 배열 설정. 내부적으로 마지막 값 +1이 자동 추가됨.
+Sets the breakpoint array. The last value + 1 is appended internally for the max layout range.
 
 ```js
 Mq.setBreakPoint([375, 768, 1440]);
@@ -85,20 +116,20 @@ Mq.setBreakPoint([375, 768, 1440]);
 
 ### `Mq.setMobileRatio(value: number)`
 
-모바일 vw 계산 시 기준 너비를 `breakPoint[0] / ratio`로 나눔. 디자인 시안이 실제 뷰포트의 2배 해상도일 때 `2` 사용.
+Sets the mobile `vw` base as `breakPoint[0] / ratio`. Use `2` when a mobile design is prepared at 2x resolution.
 
 ```js
-Mq.setMobileRatio(2); // 620 / 2 = 310px 기준
+Mq.setMobileRatio(2); // 620 / 2 = 310px base
 ```
 
 ### `Mq.constantStyle`
 
-자주 쓰는 px 값을 상수로 등록. 클래스에서 이름으로 참조 가능. `number` 타입은 자동으로 `px` 단위 추가.
+Registers reusable values that can be referenced by name in class strings. Number values automatically receive the `px` unit.
 
 ```js
 Mq.constantStyle = {
-  HEADER: 60,      // → 60px
-  GUTTER: 20,      // → 20px
+  HEADER: 60, // -> 60px
+  GUTTER: 20, // -> 20px
 };
 ```
 
@@ -107,27 +138,27 @@ Mq.constantStyle = {
 <div class="mq-[margin|0_GUTTER]"></div>
 ```
 
-상수 이름의 `_`는 공백으로 치환됨 (`BORDER_SOLID` → `border solid`).
+`_` in constant names is converted to a space (`BORDER_SOLID` -> `border solid`).
 
 ### `Mq.setSupportCalcAutoRatio(value: boolean)`
 
-값 개수가 부족할 때 비율로 자동 보간.
+Enables automatic ratio-based interpolation when fewer values are provided.
 
-- 값 1개: mobile 기준으로 tablet, desktop 비율 계산
-- 값 2개: `[mobile, desktop]`으로 tablet 자동 보간
+- 1 value: tablet and desktop values are calculated from the mobile value.
+- 2 values: tablet is interpolated from `[mobile, desktop]`.
 
 ```js
 Mq.setSupportCalcAutoRatio(true);
 ```
 
 ```html
-<!-- 1개만 입력해도 tablet/desktop 자동 계산 -->
+<!-- Tablet and desktop values are calculated automatically -->
 <div class="mq-[width|100px]"></div>
 ```
 
 ### `Mq.setOverlap(value: boolean)`
 
-`true`로 설정하면 이전 브레이크포인트와 값이 동일한 경우 미디어 쿼리 생략.
+When `true`, media queries are omitted if the value is the same as the previous breakpoint.
 
 ```js
 Mq.setOverlap(true);
@@ -135,7 +166,7 @@ Mq.setOverlap(true);
 
 ### `getMqByString(str, isString?)`
 
-클래스 문자열을 직접 파싱하는 유틸 함수.
+Parses an `mq` class body directly.
 
 ```js
 import { getMqByString } from '@designfever/tailwind-mq';
@@ -148,22 +179,22 @@ getMqByString('width|100px<200px<300px');
 //   '@media (min-width : 1281px)': { width: '300px' }
 // }
 
-getMqByString('width|100px<200px<300px', true); // string 반환
+getMqByString('width|100px<200px<300px', true); // returns string
 ```
 
-## 예시
+## Examples
 
 ```html
 <!-- font-size -->
 <p class="mq-[font-size|14px<16px<18px]"></p>
 
-<!-- display 전환 -->
+<!-- display switch -->
 <div class="mq-[display|none<block]"></div>
 
 <!-- transform -->
 <div class="mq-[transform|translateX(10px)<translateX(20px)]"></div>
 
-<!-- 고정값 혼용 (spx) -->
+<!-- mixed static values (spx) -->
 <div class="mq-[border-width|1spx<2spx<2spx]"></div>
 ```
 

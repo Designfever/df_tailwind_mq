@@ -1,18 +1,43 @@
 {
   "name": "@designfever/tailwind-mq",
+  "description": "Tailwind CSS plugin that converts design px values into breakpoint-aware vw utilities while preserving fixed desktop pixel targets.",
   "author": "uforgot@me.com",
   "private": false,
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "tailwindcss",
+    "tailwind-plugin",
+    "responsive-design",
+    "fluid-ui",
+    "vw",
+    "design-system",
+    "frontend",
+    "css"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Designfever/df_tailwind_mq.git"
+  },
+  "homepage": "https://github.com/Designfever/df_tailwind_mq#readme",
+  "bugs": {
+    "url": "https://github.com/Designfever/df_tailwind_mq/issues"
+  },
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
     "test:watch": "vitest",
     "demo": "vite build && vite preview",
-    "prepack": "yarn build",
-    "build": "yarn clean && yarn build:tsc && yarn build:js",
-    "build:tsc": "yarn tsc",
+    "prepack": "npm run build",
+    "build": "npm run clean && npm run build:tsc && npm run build:js",
+    "build:tsc": "tsc",
     "build:js": "node build.js",
     "clean": "rm -rf dist"
   },
